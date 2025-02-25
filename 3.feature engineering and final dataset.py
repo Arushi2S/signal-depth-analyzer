@@ -28,8 +28,6 @@ output_file = "final1.csv"
 df.to_csv(output_file, index=False)
 
 print("✅ Feature engineering completed and dataset saved as final1.csv")
-import pandas as pd
-import numpy as np
 
 # Load dataset
 df = pd.read_csv('final1.csv')
@@ -46,7 +44,6 @@ df_filtered = df_filtered[important_columns]
 df_filtered.to_csv('final_cleaned.csv', index=False)
 
 print("✅ Final cleaned dataset saved successfully as final_cleaned.csv")
-import pandas as pd
 
 # Load the dataset
 df = pd.read_csv("final1.csv")
