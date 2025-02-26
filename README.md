@@ -1,5 +1,4 @@
-[final.csv](https://github.com/user-attachments/files/18977579/final.csv)# signal-depth-analyzer
-obtained dataset
+
 # Verilog Code Analysis and Complexity Prediction
 
 ## Overview
@@ -39,6 +38,15 @@ This project extracts features from Verilog code to analyze signal complexity, c
    - Features: Fan-in, Fan-out, Signal Depth, Gate Activity, Register-to-Wire Ratio.
    - Trains on 80% of the dataset, tests on 20%.
    - Evaluates performance using MAE, MSE, and R² score.
+     
+## Dataset
+OBTAINED DATASET FROM HUGGING FACE
+
+[final.csv](https://github.com/user-attachments/files/18977579/final.csv)
+
+CLEANED DATASET TO BE USED
+
+[final_refined.csv](https://github.com/user-attachments/files/18977624/final_refined.csv)
 
 ## Dependencies
 - Python
