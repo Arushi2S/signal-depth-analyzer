@@ -1,112 +1,110 @@
-
-# Verilog Code Analysis and Complexity Prediction
+# Signal Depth Analyzer
 
 ## Overview
-This project extracts features from Verilog code to analyze signal complexity, combinational depth, and timing violations. The dataset undergoes multiple stages of processing, including feature extraction, graph-based analysis, and machine learning-based prediction.
+Signal Depth Analyzer is an AI-based tool designed to predict the combinational logic depth of signals in RTL (Register Transfer Level) designs. Traditional timing analysis requires full synthesis runs, which can be time-consuming. This project leverages machine learning to estimate logic depth and identify potential timing violations early in the design cycle, providing a faster alternative for hardware engineers and RTL designers.
 
 ## Features Extracted
-1. **Logic Gate Usage:** Count of AND, OR, XOR, NOT gates, and D flip-flops (DFFs).
-2. **Signal Information:** Number of wires, registers, and assignments.
-3. **Structural Complexity:** Fan-in, Fan-out, signal depth.
-4. **Behavioral Constructs:** Count of always blocks, loops, and conditionals.
-5. **Circuit Complexity Score:** Weighted combination of logic gate counts.
-6. **Feature Engineering:** Gate activity, register-to-wire ratio, log-transformed signal depth.
+- **Signal Information:** Extracted from Verilog designs.
+- **Structural Complexity:** Fan-in, Fan-out, and Combinational Depth.
+- **Feature Engineering:** Selected key features relevant to timing analysis.
+- **Dataset Creation:** Synthesized Verilog designs and extracted signal properties.
+- **ML Model Training:** Trained an AI model to predict signal depth based on extracted features.
+
+### Extracted Features & Their Impact on Signal Depth
+| Feature | Description | Impact on Signal Depth |
+|---------|-------------|-----------------------|
+| **num_pub_wire_bits** | Total bit-width of publicly accessible wires | Higher bit-width can indicate more complex interconnections |
+| **Fan-out** | Number of outputs driven by a signal | Higher fan-out can increase propagation delay |
+| **num_pub_wires** | Number of publicly accessible wires | More public wires can indicate increased signal interactions |
+| **num_cells** | Number of logic cells (gates, flip-flops) | More cells increase logic complexity |
+| **num_wires** | Total number of wires in the design | More wires indicate greater interconnect complexity |
+| **num_wire_bits** | Total bit-width of all wires | Higher bit-width can contribute to timing delays |
+| **num_processes** | Number of always/process blocks in RTL | More processes may introduce additional pipeline stages |
+| **Fan-in** | Number of inputs feeding into a gate/module | Higher fan-in can lead to increased signal depth |
+| **Signal Type** | Name of the signal/module in the Verilog file | Can determine signal classification and role |
 
 ## Workflow
-1. **Dataset Loading**
-   - Loads a Verilog dataset from `hf://datasets/ahmedallam/RTL-Repo/`.
-   - Extracts Verilog features using regular expressions.
-   - Computes fan-in, fan-out, and logic depth.
-   - Saves processed data to CSV and Parquet formats.
+### 1. Data Collection & Processing
+- Extracted RTL design information from Verilog files.
+- Ran Yosys synthesis to obtain combinational depth reports.
+- Created a structured dataset with relevant signal features.
 
-2. **Graph-Based Signal Analysis**
-   - Loads dataset into NetworkX.
-   - Constructs a directed graph from `source` and `destination` signals.
-   - Computes fan-in, fan-out, and longest signal path.
-   - Saves updated dataset with additional graph features.
+### 2. Feature Engineering & Cleaning
+- Selected key features such as Fan-In, Fan-Out, and Signal Type.
+- Removed redundant columns (e.g., num_memories, num_memory_bits).
 
-3. **Feature Engineering & Cleaning**
-   - Normalizes logic gate activity.
-   - Computes register-to-wire ratio.
-   - Computes circuit complexity score.
-   - Log-transforms signal depth.
-   - Filters out rows with excessive zero values.
-   - Saves cleaned dataset as `final_cleaned.csv`.
+### 3. Machine Learning Model
+- Explored multiple regression models.
+- Compared models based on accuracy and performance.
+- Trained and tested an optimized ML model for prediction.
 
-4. **Machine Learning Model**
-   - Uses `RandomForestRegressor` to predict circuit complexity.
-   - Features: Fan-in, Fan-out, Signal Depth, Gate Activity, Register-to-Wire Ratio.
-   - Trains on 80% of the dataset, tests on 20%.
-   - Evaluates performance using MAE, MSE, and R² score.
-     
+### 4. Model Evaluation
+- Split dataset into training and testing sets.
+- Evaluated model performance using:
+  - **Mean Absolute Error (MAE):** 0.24
+  - **R² Score:** 0.98 (indicating excellent model fit)
+
 ## Dataset
-OBTAINED DATASET FROM HUGGING FACE
+**Data Sources:**
+The dataset was constructed using open-source Verilog designs from the following repositories:
+- [100 Days of RTL](https://github.com/ekb0412/100DaysofRTL)
+- [Sky130 RTL Design and Synthesis Workshop](https://github.com/kunalg123/sky130RTLDesignAndSynthesisWorkshop)
+- [Verilog Design Examples](https://github.com/snbk001/Verilog-Design-Examples/tree/main/Half%20Adder)
 
-[final.csv](https://github.com/user-attachments/files/18977579/final.csv)
+### Output Files
+## Output Files
 
-CLEANED DATASET TO BE USED
+- **yosys_full_dataset.csv** – Extracted dataset from one of the repositories.  
+- **yosys_full_dataset1.csv** – Extracted dataset from the second repository.  
+- **yosys_full_dataset2.csv** – Extracted dataset from the third repository.  
+- **yosys_full_dataset4.csv** – Extracted dataset from the fourth repository.  
+- **combinational_depth_model.pkl** – Trained machine learning model, which can be loaded using:  
+  ```python
+  model = joblib.load('combinational_depth_model.pkl')
 
-[final_refined.csv](https://github.com/user-attachments/files/18977624/final_refined.csv)
 
 ## Dependencies
 - Python
 - Pandas
 - NumPy
-- NetworkX
-- Scikit-learn
-- Regular Expressions (re)
+- scikit-learn
+- Yosys (for synthesis)
 
 ## Usage
-1. Ensure the dataset path is correctly set.
-2. Run the feature extraction script.
-3. Execute the graph-based analysis module.
-4. Perform feature engineering and save the dataset.
-5. Train and evaluate the ML model.
-
-## Output Files
-- `analyzing_dataset.parquet` / `analyzing_dataset.csv` – Extracted Verilog features.
-- `final_cleaned.csv` – Processed dataset with engineered features.
-- `final_refined.csv` – Dataset for ML model.
-- `final1.csv` – Feature-enhanced dataset.
-
-
-## Model Performance Metrics
-- **MAE (Mean Absolute Error)** – Measures average prediction error.
-- **MSE (Mean Squared Error)** – Penalizes large errors.
-- **R² Score** – Measures how well the model explains variance.
+1. Ensure Yosys is installed and configured.
+2. Run the dataset extraction script to process Verilog files.
+3. Execute the feature extraction and engineering module.
+4. Train and evaluate the ML model.
 
 ## Code Complexity
+### 1. Logical Complexity
+- Feature Extraction: Identifies signals, logic gates, and circuit structures.
+- Graph-Based Analysis: Computes Fan-In, Fan-Out, and Combinational Depth.
+- ML Model: Predicts signal depth using regression models.
 
-### **1. Logical Complexity**
-The code processes Verilog files to extract design-related features and predict combinational complexity. Key logical operations include:
-- **Feature Extraction**: Uses regular expressions to identify signals, logic gates, and circuit structures.
-- **Graph Construction**: Creates a directed graph where nodes represent signals and edges represent dependencies.
-- **Metric Computation**: Determines fan-in, fan-out, and combinational depth for each signal.
-- **Machine Learning Model**: Trains a regression model to predict circuit complexity based on extracted features.
-
-### **2. Computational Complexity**
-The computational complexity of major operations is analyzed below:
-
+### 2. Computational Complexity
 | Operation | Complexity |
-|-----------|------------|
-| Regex-based feature extraction | O(n) (where n is the file size) |
-| Graph construction (adding edges) | O(V + E) (where V is signals and E is dependencies) |
-| Longest path calculation in DAG | O(V + E) |
-| Random Forest training | O(n log n) (where n is the number of samples) |
-| Data preprocessing (scaling, splitting) | O(n) |
+|-----------|-------------|
+| File Traversal (os.walk) | O(F) (F = number of Verilog files) |
+| Running Yosys (subprocess) | O(F × N) (N = number of logic elements) |
+| Parsing JSON (json.load) | O(F × J) (J = size of JSON output) |
+| Constructing DataFrame (pandas.DataFrame) | O(F) |
+| ML Model Training (Random Forest) | O(n log n) (n = number of samples) |
 
-### **3. Overall Complexity**
-- **Feature extraction & parsing**: O(n)
-- **Graph processing**: O(V + E)
-- **Machine learning model training**: O(n log n)
+### 3. Overall Complexity
+- Feature Extraction & Parsing: **O(n)**
+- Graph Processing: **O(V + E)** (V = signals, E = dependencies)
+- Machine Learning Model Training: **O(n log n)**
 
-### **4. Complexity Category**
-- **Moderate to High Complexity** due to a mix of **text processing, graph analysis, and machine learning**.
-- The most computationally expensive operations are **graph-based depth calculations** and **RandomForestRegressor training**.
-- Optimization strategies may include caching, parallel processing, or reducing redundant operations.
 
----
-This complexity analysis provides insights into performance bottlenecks and areas for improvement in the codebase.
+
+## Conclusion
+The **Signal Depth Analyzer** provides a fast and efficient way to predict combinational depth in RTL designs, enabling early detection of potential timing violations. Future improvements include:
+- Expanding the dataset with more complex Verilog designs.
+- Optimizing feature selection for better accuracy.
+- Exploring deep learning models for improved generalization.
+
+
 
 ## Conclusion
 This pipeline enables efficient extraction and analysis of Verilog designs, facilitating circuit complexity prediction and RTL optimization.
