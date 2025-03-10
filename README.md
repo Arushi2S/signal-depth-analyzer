@@ -62,6 +62,14 @@ The dataset was constructed using open-source Verilog designs from the following
   ```python
   model = joblib.load('combinational_depth_model.pkl')
 
+[yosys_full_dataset.csv](https://github.com/user-attachments/files/19167858/yosys_full_dataset.csv)
+
+[yosys_full_dataset1.csv](https://github.com/user-attachments/files/19167886/yosys_full_dataset1.csv)
+
+[yosys_full_dataset2.csv](https://github.com/user-attachments/files/19167891/yosys_full_dataset2.csv)
+
+[yosys_full_dataset4.csv](https://github.com/user-attachments/files/19167897/yosys_full_dataset4.csv)
+
 
 ## Dependencies
 - Python
@@ -69,6 +77,9 @@ The dataset was constructed using open-source Verilog designs from the following
 - NumPy
 - scikit-learn
 - Yosys (for synthesis)
+
+
+
 
 ## Usage
 1. Ensure Yosys is installed and configured.
